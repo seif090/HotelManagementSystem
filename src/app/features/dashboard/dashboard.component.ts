@@ -85,4 +85,16 @@ export class DashboardComponent implements OnInit {
     };
     return labels[status] || status;
   }
+
+  getOccupancyChange(): number {
+    return 5;
+  }
+
+  getRevenueChange(): number {
+    return 10;
+  }
+
+  getBookingsChange(): number {
+    return 8;
+  }
 }
