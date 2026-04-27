@@ -1,0 +1,18 @@
+
+<div class="stat-card card">
+  <div class="card-body">
+    <div class="stat-header">
+      <div class="stat-icon">{{ icon }}</div>
+      <div class="stat-info">
+        <p class="stat-title">{{ title }}</p>
+        <p class="stat-value">{{ value }}</p>
+      </div>
+    </div>
+    @if (change) {
+    <div class="stat-change">
+      <span class="change-icon">{{ changeType === 'up' ? '▲' : '▼' }}</span>
+      <span [class]="'change-text ' + (changeType === 'up' ? 'up' : 'down')">{{ change }}</span>
+    </div>
+    }
+  </div>
+</div>

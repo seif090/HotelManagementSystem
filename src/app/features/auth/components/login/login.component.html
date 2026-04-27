@@ -1,0 +1,88 @@
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo">
+        <span class="logo-icon">🏨</span>
+        <h1>نظام إدارة الفندق</h1>
+        <p>تسجيل الدخول إلى لوحة التحكم</p>
+      </div>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">البريد الإلكتروني</label>
+        <div class="input-wrapper">
+          <span class="input-icon">✉️</span>
+          <input
+            type="email"
+            id="email"
+            class="form-control"
+            [(ngModel)]="loginForm().email"
+            name="email"
+            placeholder="أدخل بريدك الإلكتروني"
+            [disabled]="loading()"
+            required
+            autocomplete="email"
+            dir="ltr"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">كلمة المرور</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔒</span>
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            id="password"
+            class="form-control"
+            [(ngModel)]="loginForm().password"
+            name="password"
+            placeholder="أدخل كلمة المرور"
+            [disabled]="loading()"
+            required
+            autocomplete="current-password"
+            dir="ltr"
+          >
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePassword()"
+            [attr.aria-label]="showPassword() ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'"
+            [disabled]="loading()"
+          >
+            {{ showPassword() ? '🙈' : '👁️' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="form-options">
+        <label class="remember-me">
+          <input type="checkbox" [(ngModel)]="loginForm().remember" name="remember" [disabled]="loading()">
+          <span>تذكرني</span>
+        </label>
+        <a href="#" class="forgot-password">نسيت كلمة المرور؟</a>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-login"
+        [disabled]="loading()"
+      >
+        <span *ngIf="!loading()">تسجيل الدخول</span>
+        <span *ngIf="loading()" class="loading-spinner">
+          ⏳ جاري الدخول...
+        </span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p class="demo-info">
+        <small>بيانات التجربة:</small><br>
+        <strong>البريد:</strong> admin@hotel.com<br>
+        <strong>كلمة المرور:</strong> admin123
+      </p>
+    </div>
+  </div>
+</div>

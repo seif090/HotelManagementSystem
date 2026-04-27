@@ -1,0 +1,139 @@
+
+<main class="main-content">
+  <div class="content-header">
+    <h2 class="section-title">إدارة الحجوزات</h2>
+    <p class="section-subtitle">إدارة وتتبع جميع حجوزات الفندق</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-body">
+      <div class="filters-row">
+        <div class="search-box">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="🔍 البحث باسم العميل أو رقم الغرفة..."
+            [(ngModel)]="searchQuery"
+            (input)="applyFilters()"
+          >
+        </div>
+        <select class="form-control" style="width: 150px;" [(ngModel)]="filterStatus" (change)="applyFilters()">
+          <option value="">جميع الحالات</option>
+          <option value="confirmed">مؤكد</option>
+          <option value="cancelled">ملغي</option>
+          <option value="checked-in">تم تسجيل الدخول</option>
+          <option value="checked-out">تم تسجيل الخروج</option>
+        </select>
+        <button class="btn btn-primary" (click)="openAddModal()">
+          ➕ إضافة حجز
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bookings Table -->
+  <div class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>العميل</th>
+          <th>الغرفة</th>
+          <th>تاريخ الدخول</th>
+          <th>تاريخ الخروج</th>
+          <th>السعر الإجمالي</th>
+          <th>الحالة</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let booking of filteredBookings">
+          <td><strong>{{ booking.customer?.name || '---' }}</strong></td>
+          <td>{{ booking.room?.number || '---' }}</td>
+          <td>{{ booking.checkIn }}</td>
+          <td>{{ booking.checkOut }}</td>
+          <td>{{ booking.totalPrice }} ر.س</td>
+          <td>
+            <span class="badge" [class]="'badge-' + getStatusClass(booking.status)">
+              {{ getStatusLabel(booking.status) }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-sm btn-secondary" (click)="openEditModal(booking)" title="تعديل">
+                ✏️
+              </button>
+              <button class="btn btn-sm btn-warning" 
+                      (click)="updateStatus(booking, 'checked-in')"
+                      [disabled]="booking.status !== 'confirmed'"
+                      title="تسجيل دخول">
+                🚪
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="deleteBooking(booking)" title="حذف">
+                🗑️
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal-overlay" *ngIf="showModal()" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="card-header">
+        <h3>{{ editingBooking ? 'تعديل الحجز' : 'إضافة حجز جديد' }}</h3>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="saveBooking()">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>العميل</label>
+              <select class="form-control" [(ngModel)]="newBooking().customerId" name="customerId" required>
+                <option value="">اختر عميل</option>
+                <option *ngFor="let customer of customers" [value]="customer.id">
+                  {{ customer.name }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>الغرفة</label>
+              <select class="form-control" [(ngModel)]="newBooking().roomId" name="roomId" required (change)="calculatePrice()">
+                <option value="">اختر غرفة</option>
+                <option *ngFor="let room of rooms" [value]="room.id">
+                  {{ room.number }} - {{ room.type }} ({{ room.price }} ر.س)
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>تاريخ الدخول</label>
+              <input type="date" class="form-control" [(ngModel)]="newBooking().checkIn" name="checkIn" required (change)="calculatePrice()">
+            </div>
+            <div class="form-group">
+              <label>تاريخ الخروج</label>
+              <input type="date" class="form-control" [(ngModel)]="newBooking().checkOut" name="checkOut" required (change)="calculatePrice()">
+            </div>
+            <div class="form-group">
+              <label>السعر الإجمالي</label>
+              <input type="number" class="form-control" [(ngModel)]="newBooking().totalPrice" name="totalPrice" readonly>
+            </div>
+            <div class="form-group">
+              <label>الحالة</label>
+              <select class="form-control" [(ngModel)]="newBooking().status" name="status">
+                <option value="confirmed">مؤكد</option>
+                <option value="cancelled">ملغي</option>
+                <option value="checked-in">تم تسجيل الدخول</option>
+                <option value="checked-out">تم تسجيل الخروج</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">إلغاء</button>
+            <button type="submit" class="btn btn-primary">{{ editingBooking ? 'تحديث' : 'إضافة' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>

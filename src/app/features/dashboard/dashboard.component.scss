@@ -1,0 +1,149 @@
+.main-content {
+  padding: 1.5rem;
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+.content-header {
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.section-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.stats-section {
+  margin-bottom: 1.5rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.dashboard-body {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 1.5rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-card .card-body {
+  padding: 1.5rem;
+}
+
+.occupancy-chart {
+  margin-bottom: 1.5rem;
+}
+
+.chart-bar {
+  margin-bottom: 1.25rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+
+  .value {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+}
+
+.bar-container {
+  height: 24px;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 12px;
+  transition: width 1s ease-out;
+
+  &.fill-available {
+    background: linear-gradient(90deg, var(--accent-secondary), #34d399);
+  }
+
+  &.fill-occupied {
+    background: linear-gradient(90deg, var(--accent-warning), #fbbf24);
+  }
+
+  &.fill-maintenance {
+    background: linear-gradient(90deg, var(--accent-danger), #f87171);
+  }
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+
+  &.available { background: var(--accent-secondary); }
+  &.occupied { background: var(--accent-warning); }
+  &.maintenance { background: var(--accent-danger); }
+}
+
+.recent-bookings {
+  max-height: 400px;
+
+  .card-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .card-body {
+    padding: 0;
+  }
+
+  .table {
+    margin: 0;
+  }
+
+  th, td {
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+  }
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}

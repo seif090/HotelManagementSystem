@@ -1,0 +1,36 @@
+
+<aside class="sidebar" [class.collapsed]="isCollapsed()">
+  <div class="sidebar-header">
+    <button class="collapse-btn" (click)="toggleCollapse()" [attr.aria-label]="isCollapsed() ? 'توسيع القائمة' : 'طي القائمة'">
+      <span class="icon">{{ isCollapsed() ? '▶' : '◀' }}</span>
+    </button>
+    @if (!isCollapsed()) {
+    <div class="logo">
+      <span class="logo-icon">🏨</span>
+      <span class="logo-text">نظام إدارة الفندق</span>
+    </div>
+    }
+  </div>
+
+  <nav class="nav-menu">
+    @for (item of navigation; track item.path) {
+    <a class="nav-item" 
+       [class.active]="isActive(item.path)"
+       (click)="navigate(item.path)">
+      <span class="nav-icon">{{ item.icon }}</span>
+      @if (!isCollapsed()) {
+      <span class="nav-label">{{ item.label }}</span>
+      }
+    </a>
+    }
+  </nav>
+
+  @if (!isCollapsed()) {
+  <div class="sidebar-footer">
+    <button class="logout-btn" (click)="logout()">
+      <span class="icon">🚪</span>
+      <span>تسجيل الخروج</span>
+    </button>
+  </div>
+  }
+</aside>

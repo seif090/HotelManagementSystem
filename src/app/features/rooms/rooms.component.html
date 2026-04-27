@@ -1,0 +1,148 @@
+
+<main class="main-content">
+  <div class="content-header">
+    <h2 class="section-title">إدارة الغرف</h2>
+    <p class="section-subtitle">إدارة وتتبع جميع غرف الفندق</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-body">
+      <div class="filters-row">
+        <div class="search-box">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="🔍 البحث برقم الغرفة أو النوع..."
+            [(ngModel)]="searchQuery"
+            (input)="applyFilters()"
+          >
+        </div>
+        <select class="form-control" style="width: 150px;" [(ngModel)]="filterStatus" (change)="applyFilters()">
+          <option value="">جميع الحالات</option>
+          <option value="available">متاحة</option>
+          <option value="occupied">مشغولة</option>
+          <option value="maintenance">صيانة</option>
+        </select>
+        <select class="form-control" style="width: 150px;" [(ngModel)]="filterType" (change)="applyFilters()">
+          <option value="">جميع الأنواع</option>
+          <option *ngFor="let type of roomTypes" [value]="type">{{ type }}</option>
+        </select>
+        <button class="btn btn-primary" (click)="openAddModal()">
+          ➕ إضافة غرفة
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rooms Table -->
+  <div class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>الرقم</th>
+          <th>النوع</th>
+          <th>السعر (لليلة)</th>
+          <th>السعة</th>
+          <th>الدور</th>
+          <th>الحالة</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let room of filteredRooms">
+          <td><strong>{{ room.number }}</strong></td>
+          <td>{{ room.type }}</td>
+          <td>{{ room.price }} ر.س</td>
+          <td>{{ room.capacity }} شخص</td>
+          <td>الدور {{ room.floor }}</td>
+          <td>
+            <span class="badge" [class]="'badge-' + getStatusClass(room.status)">
+              {{ getStatusLabel(room.status) }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-sm btn-secondary" (click)="openEditModal(room)" title="تعديل">
+                ✏️
+              </button>
+              <button class="btn btn-sm" 
+                      [class]="'btn-' + (room.status === 'available' ? 'success' : room.status === 'occupied' ? 'warning' : 'danger')"
+                      (click)="updateStatus(room, room.status === 'available' ? 'occupied' : room.status === 'occupied' ? 'maintenance' : 'available')"
+                      title="تغيير الحالة">
+                🔄
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="deleteRoom(room)" title="حذف">
+                🗑️
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal-overlay" *ngIf="showModal()" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="card-header">
+        <h3>{{ editingRoom ? 'تعديل الغرفة' : 'إضافة غرفة جديدة' }}</h3>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="saveRoom()" #roomForm="ngForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>رقم الغرفة</label>
+              <input type="text" class="form-control" [(ngModel)]="newRoom().number" name="number" required>
+            </div>
+            <div class="form-group">
+              <label>نوع الغرفة</label>
+              <select class="form-control" [(ngModel)]="newRoom().type" name="type">
+                <option *ngFor="let type of roomTypes" [value]="type">{{ type }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>السعر (لليلة)</label>
+              <input type="number" class="form-control" [(ngModel)]="newRoom().price" name="price" required>
+            </div>
+            <div class="form-group">
+              <label>السعة</label>
+              <input type="number" class="form-control" [(ngModel)]="newRoom().capacity" name="capacity" required>
+            </div>
+            <div class="form-group">
+              <label>الدور</label>
+              <input type="number" class="form-control" [(ngModel)]="newRoom().floor" name="floor" required>
+            </div>
+            <div class="form-group">
+              <label>الحالة</label>
+              <select class="form-control" [(ngModel)]="newRoom().status" name="status">
+                <option value="available">متاحة</option>
+                <option value="occupied">مشغولة</option>
+                <option value="maintenance">صيانة</option>
+              </select>
+            </div>
+            <div class="form-group" style="grid-column: span 2;">
+              <label>الوصف</label>
+              <textarea class="form-control" [(ngModel)]="newRoom().description" name="description" rows="3"></textarea>
+            </div>
+            <div class="form-group" style="grid-column: span 2;">
+              <label>المميزات</label>
+              <div class="amenity-tags">
+                <span *ngFor="let amenity of ['WiFi', 'AC', 'TV', 'Mini Bar', 'Jacuzzi', 'Balcony', 'Kitchen', 'Work Desk']" 
+                      class="amenity-tag" 
+                      [class.active]="newRoom().amenities.includes(amenity)"
+                      (click)="toggleAmenity(amenity)">
+                  {{ amenity }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">إلغاء</button>
+            <button type="submit" class="btn btn-primary">{{ editingRoom ? 'تحديث' : 'إضافة' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>

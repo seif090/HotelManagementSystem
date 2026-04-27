@@ -1,0 +1,101 @@
+
+<main class="main-content">
+  <div class="content-header">
+    <h2 class="section-title">إدارة العملاء</h2>
+    <p class="section-subtitle">إدارة وتتبع جميع عملاء الفندق</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-body">
+      <div class="filters-row">
+        <div class="search-box">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="🔍 البحث باسم، بريد، هاتف أو هوية..."
+            [(ngModel)]="searchQuery"
+            (input)="applyFilters()"
+          >
+        </div>
+        <button class="btn btn-primary" (click)="openAddModal()">
+          ➕ إضافة عميل
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customers Table -->
+  <div class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>الاسم</th>
+          <th>البريد الإلكتروني</th>
+          <th>الهاتف</th>
+          <th>الهوية</th>
+          <th>عدد الحجوزات</th>
+          <th>تاريخ التسجيل</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let customer of filteredCustomers">
+          <td><strong>{{ customer.name }}</strong></td>
+          <td>{{ customer.email }}</td>
+          <td>{{ customer.phone }}</td>
+          <td>{{ customer.nationalId }}</td>
+          <td>
+            <span class="badge badge-info">{{ customer.bookingsCount }}</span>
+          </td>
+          <td>{{ customer.createdAt }}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-sm btn-secondary" (click)="openEditModal(customer)" title="تعديل">
+                ✏️
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="deleteCustomer(customer)" title="حذف">
+                🗑️
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal-overlay" *ngIf="showModal()" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="card-header">
+        <h3>{{ editingCustomer ? 'تعديل العميل' : 'إضافة عميل جديد' }}</h3>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="saveCustomer()">
+          <div class="form-grid">
+            <div class="form-group" style="grid-column: span 2;">
+              <label>الاسم</label>
+              <input type="text" class="form-control" [(ngModel)]="newCustomer().name" name="name" required>
+            </div>
+            <div class="form-group">
+              <label>البريد الإلكتروني</label>
+              <input type="email" class="form-control" [(ngModel)]="newCustomer().email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label>الهاتف</label>
+              <input type="tel" class="form-control" [(ngModel)]="newCustomer().phone" name="phone" required>
+            </div>
+            <div class="form-group">
+              <label>الهوية الوطنية</label>
+              <input type="text" class="form-control" [(ngModel)]="newCustomer().nationalId" name="nationalId" required>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">إلغاء</button>
+            <button type="submit" class="btn btn-primary">{{ editingCustomer ? 'تحديث' : 'إضافة' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>

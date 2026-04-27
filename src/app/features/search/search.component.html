@@ -1,0 +1,144 @@
+
+<main class="main-content">
+  <div class="content-header">
+    <h2 class="section-title">البحث</h2>
+    <p class="section-subtitle">البحث المتقدم عن الغرف والحجوزات</p>
+  </div>
+
+  <!-- Search Tabs -->
+  <div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-body">
+      <div class="search-tabs">
+        <button class="tab-btn" [class.active]="searchType() === 'rooms'" (click)="searchType.set('rooms'); loadData()">
+          🔍 بحث في الغرف
+        </button>
+        <button class="tab-btn" [class.active]="searchType() === 'bookings'" (click)="searchType.set('bookings'); loadData()">
+          📅 بحث في الحجوزات
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Filters -->
+  <div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-body">
+      <div class="filters-grid">
+        <div class="search-box">
+          <label>🔍 كلمة البحث</label>
+          <input
+            type="text"
+            class="form-control"
+            [placeholder]="searchType() === 'rooms' ? 'الرقم، الوصف...' : 'العميل، الغرفة، التاريخ...'"
+            [(ngModel)]="searchQuery"
+          >
+        </div>
+
+        <div *ngIf="searchType() === 'rooms'">
+          <label>نوع الغرفة</label>
+          <select class="form-control" [(ngModel)]="roomType">
+            <option value="">جميع الأنواع</option>
+            <option *ngFor="let type of roomTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+
+        <div>
+          <label>تاريخ الدخول</label>
+          <input type="date" class="form-control" [(ngModel)]="checkInDate">
+        </div>
+
+        <div>
+          <label>تاريخ الخروج</label>
+          <input type="date" class="form-control" [(ngModel)]="checkOutDate">
+        </div>
+
+        <div *ngIf="searchType() === 'rooms'">
+          <label>السعر (من)</label>
+          <input type="number" class="form-control" [(ngModel)]="minPrice" placeholder="0">
+        </div>
+
+        <div *ngIf="searchType() === 'rooms'">
+          <label>السعر (إلى)</label>
+          <input type="number" class="form-control" [(ngModel)]="maxPrice" placeholder="بدون حد أقصى">
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn btn-primary" (click)="performSearch()">
+          🔍 تنفيذ البحث
+        </button>
+        <button class="btn btn-secondary" (click)="clearFilters()">
+          🔄 مسح الفلاتر
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Results -->
+  <div class="search-results">
+    <div class="results-header">
+      <h3>نتائج البحث ({{ searchResults.length }})</h3>
+    </div>
+
+    <div *ngIf="searchType() === 'rooms'" class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>رقم الغرفة</th>
+            <th>النوع</th>
+            <th>السعر</th>
+            <th>السعة</th>
+            <th>الحالة</th>
+            <th>الوصف</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let room of searchResults">
+            <td><strong>{{ room.number }}</strong></td>
+            <td>{{ room.type }}</td>
+            <td>{{ room.price }} ر.س</td>
+            <td>{{ room.capacity }} شخص</td>
+            <td>
+              <span class="badge" [class]="'badge-' + getStatusClass(room.status)">
+                {{ getStatusLabel(room.status) }}
+              </span>
+            </td>
+            <td>{{ room.description }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="searchType() === 'bookings'" class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>العميل</th>
+            <th>الغرفة</th>
+            <th>تاريخ الدخول</th>
+            <th>تاريخ الخروج</th>
+            <th>السعر</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let booking of searchResults">
+            <td><strong>{{ booking.customer?.name || '---' }}</strong></td>
+            <td>{{ booking.room?.number || '---' }}</td>
+            <td>{{ booking.checkIn }}</td>
+            <td>{{ booking.checkOut }}</td>
+            <td>{{ booking.totalPrice }} ر.س</td>
+            <td>
+              <span class="badge" [class]="'badge-' + getStatusClass(booking.status)">
+                {{ getStatusLabel(booking.status) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="searchResults.length === 0" class="empty-state">
+      <p>لا توجد نتائج مطابقة للبحث</p>
+    </div>
+  </div>
+</main>

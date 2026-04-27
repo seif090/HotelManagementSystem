@@ -1,0 +1,147 @@
+
+<main class="main-content">
+  <div class="content-header">
+    <h2 class="section-title">لوحة التحكم</h2>
+    <p class="section-subtitle">نظرة عامة على أداء الفندق</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <app-stat-card
+        title="الغرف الإجمالية"
+        [value]="totalRooms().toString()"
+        [change]="'+' + availableRooms() + ' متاحة'"
+        changeType="up"
+        icon="🏨">
+      </app-stat-card>
+
+      <app-stat-card
+        title="الغرف المشغولة"
+        [value]="occupiedRooms().toString()"
+        [change]="occupancyRate() + '% معدل الإشغال'"
+        changeType="up"
+        icon="🛏️">
+      </app-stat-card>
+
+      <app-stat-card
+        title="العملاء"
+        [value]="totalCustomers().toString()"
+        [change]="'+' + activeBookings() + ' نشط'"
+        changeType="up"
+        icon="👤">
+      </app-stat-card>
+
+      <app-stat-card
+        title="الحجوزات"
+        [value]="totalBookings().toString()"
+        [change]="'+' + activeBookings() + ' سارية'"
+        changeType="up"
+        icon="📅">
+      </app-stat-card>
+    </div>
+  </section>
+
+  <!-- Charts & Recent Activity -->
+  <section class="dashboard-body">
+    <!-- Occupancy Chart -->
+    <div class="chart-card card">
+      <div class="card-header">
+        <h3>نسبة الإشغال</h3>
+      </div>
+      <div class="card-body">
+        <div class="occupancy-chart">
+          <div class="chart-bar">
+            <div class="bar-label">
+              <span>غرف متاحة</span>
+              <span class="value">{{ availableRooms() }}</span>
+            </div>
+            <div class="bar-container">
+              <div class="bar fill-available" 
+                   [style.width.%]="totalRooms() ? (availableRooms() / totalRooms() * 100) : 0">
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-bar">
+            <div class="bar-label">
+              <span>غرف مشغولة</span>
+              <span class="value">{{ occupiedRooms() }}</span>
+            </div>
+            <div class="bar-container">
+              <div class="bar fill-occupied" 
+                   [style.width.%]="totalRooms() ? (occupiedRooms() / totalRooms() * 100) : 0">
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-bar">
+            <div class="bar-label">
+              <span>غرف صيانة</span>
+              <span class="value">{{ maintenanceRooms() }}</span>
+            </div>
+            <div class="bar-container">
+              <div class="bar fill-maintenance" 
+                   [style.width.%]="totalRooms() ? (maintenanceRooms() / totalRooms() * 100) : 0">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-legend">
+          <div class="legend-item">
+            <span class="dot available"></span>
+            <span>متاحة: {{ availableRooms() }}</span>
+          </div>
+          <div class="legend-item">
+            <span class="dot occupied"></span>
+            <span>مشغولة: {{ occupiedRooms() }}</span>
+          </div>
+          <div class="legend-item">
+            <span class="dot maintenance"></span>
+            <span>صيانة: {{ maintenanceRooms() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Bookings -->
+    <div class="card recent-bookings">
+      <div class="card-header">
+        <h3>آخر الحجوزات</h3>
+        <a routerLink="/bookings" class="btn btn-primary btn-sm">
+          عرض الكل
+        </a>
+      </div>
+      <div class="card-body">
+        <table class="table" *ngIf="recentBookings.length > 0; else emptyState">
+          <thead>
+            <tr>
+              <th>العميل</th>
+              <th>الغرفة</th>
+              <th>التاريخ</th>
+              <th>الحالة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let booking of recentBookings">
+              <td>{{ booking.customer?.name || '---' }}</td>
+              <td>{{ booking.room?.number || '---' }}</td>
+              <td>{{ booking.checkIn }} - {{ booking.checkOut }}</td>
+              <td>
+                <span class="badge" [class]="'badge-' + getStatusColor(booking.status)">
+                  {{ getBookingStatusLabel(booking.status) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #emptyState>
+          <div class="empty-state">
+            <p>لا توجد حجوزات حالياً</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </section>
+</main>
