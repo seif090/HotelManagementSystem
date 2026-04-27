@@ -74,6 +74,10 @@ export class CustomerService {
     return of(true);
   }
 
+  getMockCustomer(id: number): Customer | undefined {
+    return this.mockCustomers.find(c => c.id === id);
+  }
+
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.error(`${operation} failed:`, error);
