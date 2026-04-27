@@ -1,4 +1,3 @@
->
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { BookingService, Booking } from './booking.service';
